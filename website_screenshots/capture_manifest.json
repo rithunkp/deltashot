@@ -1,0 +1,52 @@
+{
+  "captured_at_utc": "2026-10-22T13:04:05.595600+00:00",
+  "viewport": {
+    "width": 1280,
+    "height": 800,
+    "device_scale_factor": 1
+  },
+  "purpose": "Standalone real website screenshots for interactive codec demonstrations.",
+  "pairing_note": "These are independently captured pages, not matched before/after version pairs and not benchmark data.",
+  "captures": [
+    {
+      "name": "wikipedia_home",
+      "requested_url": "https://www.wikipedia.org/",
+      "title": "Wikipedia Wikimedia Foundation",
+      "screenshot": "wikipedia_home.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 97392,
+      "status": "captured"
+    },
+    {
+      "name": "github_explore",
+      "requested_url": "https://github.com/explore",
+      "title": "Explore GitHub · GitHub",
+      "screenshot": "github_explore.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 79698,
+      "status": "captured"
+    },
+    {
+      "name": "python_tutorial",
+      "requested_url": "https://docs.python.org/3/tutorial/index.html",
+      "title": "The Python Tutorial — Python 3.15.1 documentation",
+      "screenshot": "python_tutorial.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 77608,
+      "status": "captured"
+    },
+    {
+      "name": "mdn_css_grid",
+      "requested_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout",
+      "title": "CSS grid layout - CSS | MDN MDN MDN Mozilla",
+      "screenshot": "mdn_css_grid.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 133846,
+      "status": "captured"
+    }
+  ]
+}

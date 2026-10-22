@@ -1,0 +1,17 @@
+{
+  "pair_id": "candidate_00030055",
+  "split": "test",
+  "reference_page_id": "websight_v02_0001385",
+  "target_page_id": "websight_v02_0001385",
+  "mutation_type": "identity",
+  "mutation_types": [],
+  "mutation_details": [],
+  "chain_position": 0,
+  "changed_pixel_ratio": 0.0,
+  "degree_of_change": "identical",
+  "viewport": {
+    "width": 512,
+    "height": 512
+  },
+  "source": "HuggingFaceM4/WebSight:v0.2"
+}

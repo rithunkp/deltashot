@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-22T14:54:40.433744+00:00",
+  "purpose": "Local live/premade demo material only.",
+  "benchmark_note": "Real website captures and copied synthetic examples in this gallery are not a new benchmark or training data. Synthetic examples retain their source split and provenance.",
+  "capture_settings": {
+    "viewport": [
+      512,
+      512
+    ],
+    "device_scale_factor": 1,
+    "full_page": false,
+    "browser": "Playwright Chromium",
+    "same_browser_context_per_pair": true
+  },
+  "bucket_rule": "data.bucketing.bucket_from_ratio; identical <=0.01%, minor <2%, moderate <15%, major <=50%, unrelated >50% or explicitly unrelated.",
+  "pairs": [
+    {
+      "id": "python_tutorial_311_312",
+      "reference": "real_versions/python_tutorial_311_312/reference.png",
+      "target": "real_versions/python_tutorial_311_312/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://docs.python.org/3.11/tutorial/index.html",
+        "target": "https://docs.python.org/3.12/tutorial/index.html"
+      },
+      "capture_date_utc": "2026-10-22T14:53:18.718020+00:00",
+      "reference_title": "The Python Tutorial — Python 3.11.17 documentation",
+      "target_title": "The Python Tutorial — Python 3.12.15 documentation",
+      "changed_pixel_ratio": 0.2564888000488281,
+      "bucket": "major",
+      "description": "Python tutorial across documented major versions."
+    },
+    {
+      "id": "python_asyncio_311_312",
+      "reference": "real_versions/python_asyncio_311_312/reference.png",
+      "target": "real_versions/python_asyncio_311_312/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://docs.python.org/3.11/library/asyncio-task.html",
+        "target": "https://docs.python.org/3.12/library/asyncio-task.html"
+      },
+      "capture_date_utc": "2026-10-22T14:53:22.544772+00:00",
+      "reference_title": "Coroutines and Tasks — Python 3.11.17 documentation",
+      "target_title": "Coroutines and Tasks — Python 3.12.15 documentation",
+      "changed_pixel_ratio": 0.2543449401855469,
+      "bucket": "major",
+      "description": "Python asyncio tasks across documented major versions."
+    },
+    {
+      "id": "python_typing_311_312",
+      "reference": "real_versions/python_typing_311_312/reference.png",
+      "target": "real_versions/python_typing_311_312/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://docs.python.org/3.11/library/typing.html",
+        "target": "https://docs.python.org/3.12/library/typing.html"
+      },
+      "capture_date_utc": "2026-10-22T14:53:26.676945+00:00",
+      "reference_title": "typing — Support for type hints — Python 3.11.17 documentation",
+      "target_title": "typing — Support for type hints — Python 3.12.15 documentation",
+      "changed_pixel_ratio": 0.450958251953125,
+      "bucket": "major",
+      "description": "Python typing reference across documented major versions."
+    },
+    {
+      "id": "bootstrap_accordion_52_53",
+      "reference": "real_versions/bootstrap_accordion_52_53/reference.png",
+      "target": "real_versions/bootstrap_accordion_52_53/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://getbootstrap.com/docs/5.2/components/accordion/",
+        "target": "https://getbootstrap.com/docs/5.3/components/accordion/"
+      },
+      "capture_date_utc": "2026-10-22T14:53:34.704291+00:00",
+      "reference_title": "Accordion · Bootstrap v5.2",
+      "target_title": "Accordion · Bootstrap v5.3",
+      "changed_pixel_ratio": 0.3844032287597656,
+      "bucket": "major",
+      "description": "Bootstrap accordion documentation across documented major versions."
+    },
+    {
+      "id": "bootstrap_navbar_52_53",
+      "reference": "real_versions/bootstrap_navbar_52_53/reference.png",
+      "target": "real_versions/bootstrap_navbar_52_53/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://getbootstrap.com/docs/5.2/components/navbar/",
+        "target": "https://getbootstrap.com/docs/5.3/components/navbar/"
+      },
+      "capture_date_utc": "2026-10-22T14:53:41.391772+00:00",
+      "reference_title": "Navbar · Bootstrap v5.2",
+      "target_title": "Navbar · Bootstrap v5.3",
+      "changed_pixel_ratio": 0.4035377502441406,
+      "bucket": "major",
+      "description": "Bootstrap navbar documentation across documented major versions."
+    },
+    {
+      "id": "bootstrap_cards_52_53",
+      "reference": "real_versions/bootstrap_cards_52_53/reference.png",
+      "target": "real_versions/bootstrap_cards_52_53/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://getbootstrap.com/docs/5.2/components/card/",
+        "target": "https://getbootstrap.com/docs/5.3/components/card/"
+      },
+      "capture_date_utc": "2026-10-22T14:53:47.131186+00:00",
+      "reference_title": "Cards · Bootstrap v5.2",
+      "target_title": "Cards · Bootstrap v5.3",
+      "changed_pixel_ratio": 0.4854698181152344,
+      "bucket": "major",
+      "description": "Bootstrap card documentation across documented major versions."
+    },
+    {
+      "id": "sample_identical_1",
+      "reference": "benchmark_samples/sample_identical_1/reference.png",
+      "target": "benchmark_samples/sample_identical_1/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "identical",
+      "changed_pixel_ratio": 0.0,
+      "description": "Selected from synthetic test split as a visual identical example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_identical_2",
+      "reference": "benchmark_samples/sample_identical_2/reference.png",
+      "target": "benchmark_samples/sample_identical_2/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "identical",
+      "changed_pixel_ratio": 0.0,
+      "description": "Selected from synthetic test split as a visual identical example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_minor_1",
+      "reference": "benchmark_samples/sample_minor_1/reference.png",
+      "target": "benchmark_samples/sample_minor_1/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "minor",
+      "changed_pixel_ratio": 0.007434844970703125,
+      "description": "Selected from synthetic test split as a visual minor example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_minor_2",
+      "reference": "benchmark_samples/sample_minor_2/reference.png",
+      "target": "benchmark_samples/sample_minor_2/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "minor",
+      "changed_pixel_ratio": 0.0015411376953125,
+      "description": "Selected from synthetic test split as a visual minor example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_moderate_1",
+      "reference": "benchmark_samples/sample_moderate_1/reference.png",
+      "target": "benchmark_samples/sample_moderate_1/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "moderate",
+      "changed_pixel_ratio": 0.13938140869140625,
+      "description": "Selected from synthetic test split as a visual moderate example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_moderate_2",
+      "reference": "benchmark_samples/sample_moderate_2/reference.png",
+      "target": "benchmark_samples/sample_moderate_2/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "moderate",
+      "changed_pixel_ratio": 0.0315399169921875,
+      "description": "Selected from synthetic test split as a visual moderate example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_major_1",
+      "reference": "benchmark_samples/sample_major_1/reference.png",
+      "target": "benchmark_samples/sample_major_1/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "major",
+      "changed_pixel_ratio": 0.16629409790039062,
+      "description": "Selected from synthetic test split as a visual major example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_major_2",
+      "reference": "benchmark_samples/sample_major_2/reference.png",
+      "target": "benchmark_samples/sample_major_2/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "major",
+      "changed_pixel_ratio": 0.2532234191894531,
+      "description": "Selected from synthetic test split as a visual major example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_unrelated_1",
+      "reference": "benchmark_samples/sample_unrelated_1/reference.png",
+      "target": "benchmark_samples/sample_unrelated_1/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "unrelated",
+      "changed_pixel_ratio": 0.15346908569335938,
+      "description": "Selected from synthetic test split as a visual unrelated example; demo only, not a new evaluation."
+    },
+    {
+      "id": "sample_unrelated_2",
+      "reference": "benchmark_samples/sample_unrelated_2/reference.png",
+      "target": "benchmark_samples/sample_unrelated_2/target.png",
+      "origin": "synthetic",
+      "source_url": null,
+      "capture_date_utc": null,
+      "bucket": "unrelated",
+      "changed_pixel_ratio": 0.1207427978515625,
+      "description": "Selected from synthetic test split as a visual unrelated example; demo only, not a new evaluation."
+    },
+    {
+      "id": "unrelated_github_wikipedia",
+      "reference": "unrelated_pairs/unrelated_github_wikipedia/reference.png",
+      "target": "unrelated_pairs/unrelated_github_wikipedia/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://github.com/explore",
+        "target": "https://www.wikipedia.org/"
+      },
+      "capture_date_utc": "2026-10-22T13:04:05.595600+00:00",
+      "bucket": "unrelated",
+      "changed_pixel_ratio": 0.2724892578125,
+      "description": "Independent public pages (Explore GitHub · GitHub vs Wikipedia Wikimedia Foundation); unrelated fallback demonstration only."
+    },
+    {
+      "id": "unrelated_mdn_python",
+      "reference": "unrelated_pairs/unrelated_mdn_python/reference.png",
+      "target": "unrelated_pairs/unrelated_mdn_python/target.png",
+      "origin": "real",
+      "source_url": {
+        "reference": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout",
+        "target": "https://docs.python.org/3/tutorial/index.html"
+      },
+      "capture_date_utc": "2026-10-22T13:04:05.595600+00:00",
+      "bucket": "unrelated",
+      "changed_pixel_ratio": 0.9998779296875,
+      "description": "Independent public pages (CSS grid layout - CSS | MDN MDN MDN Mozilla vs The Python Tutorial — Python 3.15.1 documentation); unrelated fallback demonstration only."
+    }
+  ],
+  "dropped": []
+}

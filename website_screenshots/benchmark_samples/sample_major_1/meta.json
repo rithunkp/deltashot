@@ -1,0 +1,58 @@
+{
+  "pair_id": "candidate_00032216",
+  "split": "test",
+  "reference_page_id": "websight_v02_0001173",
+  "target_page_id": "websight_v02_0001173",
+  "mutation_type": "mutation_chain",
+  "mutation_types": [
+    "mutate_layout",
+    "mutate_insert",
+    "mutate_color",
+    "mutate_layout"
+  ],
+  "mutation_details": [
+    {
+      "type": "mutate_layout",
+      "details": {
+        "changed": true,
+        "element": "body",
+        "property": "display",
+        "value": "flex"
+      }
+    },
+    {
+      "type": "mutate_insert",
+      "details": {
+        "changed": true,
+        "parent": "p",
+        "inserted": "p"
+      }
+    },
+    {
+      "type": "mutate_color",
+      "details": {
+        "changed": true,
+        "element": "h2",
+        "property": "border-color",
+        "value": "#334155"
+      }
+    },
+    {
+      "type": "mutate_layout",
+      "details": {
+        "changed": true,
+        "element": "img",
+        "property": "width",
+        "value": "70%"
+      }
+    }
+  ],
+  "chain_position": 4,
+  "changed_pixel_ratio": 0.16629409790039062,
+  "degree_of_change": "major",
+  "viewport": {
+    "width": 512,
+    "height": 512
+  },
+  "source": "HuggingFaceM4/WebSight:v0.2"
+}

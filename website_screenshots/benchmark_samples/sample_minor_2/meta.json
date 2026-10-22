@@ -1,0 +1,29 @@
+{
+  "pair_id": "candidate_00030851",
+  "split": "test",
+  "reference_page_id": "websight_v02_0000202",
+  "target_page_id": "websight_v02_0000202",
+  "mutation_type": "mutate_color",
+  "mutation_types": [
+    "mutate_color"
+  ],
+  "mutation_details": [
+    {
+      "type": "mutate_color",
+      "details": {
+        "changed": true,
+        "element": "button",
+        "property": "border-color",
+        "value": "#f8fafc"
+      }
+    }
+  ],
+  "chain_position": 1,
+  "changed_pixel_ratio": 0.0015411376953125,
+  "degree_of_change": "minor",
+  "viewport": {
+    "width": 512,
+    "height": 512
+  },
+  "source": "HuggingFaceM4/WebSight:v0.2"
+}

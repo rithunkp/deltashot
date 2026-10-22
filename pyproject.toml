@@ -1,0 +1,15 @@
+[project]
+name = "deltashot"
+version = "0.1.0"
+description = "Reference-conditioned neural compression for UI screenshot sequences."
+requires-python = ">=3.10"
+dependencies = [
+  "beautifulsoup4",
+  "compressai",
+  "pillow",
+  "playwright",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

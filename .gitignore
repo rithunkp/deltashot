@@ -1,0 +1,38 @@
+# Python environments and caches
+.venv/
+.venv_*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp*/
+.uv-cache/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Generated training data and model weights
+/data/raw_websight/
+/data/synthetic_pairs/
+/data/synthetic_pairs_*/
+/data/processed/
+/checkpoints/
+/gpu_portable/data/*.zip
+*.pth
+*.pt
+
+# Evaluation, demo runs, downloaded Hub artifacts, and logs
+/results/*
+!/results/.gitkeep
+/hf_results/
+*.log
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

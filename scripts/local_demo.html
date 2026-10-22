@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeltaShot | Screenshot codec demo</title>
+  <style>
+    :root { color-scheme:light; --ink:#17232d; --muted:#596976; --line:#d8e0e6; --paper:#f2f5f7; --surface:#fff; --blue:#176da5; --green:#14764e; --red:#a33737; --gold:#a5640a; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.45 system-ui,Segoe UI,sans-serif; }
+    main { max-width:1440px; margin:auto; padding:22px 24px 56px; }
+    h1 { margin:0; font-size:25px; font-weight:680; }
+    h2 { font-size:19px; margin:0 0 12px; }
+    h3 { font-size:15px; margin:0; }
+    p { margin:7px 0; color:var(--muted); }
+    header { display:flex; justify-content:space-between; align-items:center; gap:18px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--muted); font-size:11px; text-transform:uppercase; margin-bottom:4px; }
+    .warning { font-size:12px; border-left:3px solid var(--gold); padding:8px 11px; background:#fff8e8; max-width:390px; }
+    .tabs { display:flex; gap:4px; margin:14px 0 0; border-bottom:1px solid var(--line); }
+    .tab { margin:0; border:0; border-bottom:3px solid transparent; border-radius:0; background:transparent; color:var(--muted); padding:11px 14px; min-height:44px; font:inherit; font-weight:650; cursor:pointer; }
+    .tab[aria-selected="true"] { color:var(--blue); border-bottom-color:var(--blue); }
+    .panel { display:none; padding-top:18px; }
+    .panel.active { display:block; }
+    .toolbar { display:flex; align-items:end; flex-wrap:wrap; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
+    .pair-preview { display:flex; gap:10px; padding:12px 0 2px; }
+    .pair-preview[hidden] { display:none; }
+    .pair-preview figure { width:118px; }
+    .pair-preview img { width:100%; aspect-ratio:1; object-fit:contain; border:1px solid var(--line); background:white; }
+    .pair-preview figcaption { margin-top:3px; }
+    label { display:block; color:var(--muted); font-size:12px; font-weight:650; margin-bottom:5px; }
+    input,select { max-width:100%; height:40px; padding:6px 9px; border:1px solid var(--line); border-radius:4px; background:white; color:var(--ink); font:inherit; }
+    input[type=file] { width:min(100%,390px); height:auto; min-height:40px; }
+    input[type=range] { height:25px; padding:0; accent-color:var(--blue); }
+    button.action { border:0; border-radius:4px; min-height:40px; padding:0 14px; background:var(--blue); color:white; font:inherit; font-weight:650; cursor:pointer; }
+    button:disabled { opacity:.55; cursor:wait; }
+    .status { padding:10px 0; color:var(--muted); min-height:28px; }
+    .status.error { color:var(--red); }
+    .muted-box { border:1px solid var(--line); background:var(--surface); padding:12px 14px; border-radius:4px; color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .codec { min-width:0; border:1px solid var(--line); border-radius:4px; background:white; overflow:hidden; }
+    .codec-top { min-height:46px; padding:10px 11px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .codec-top h3 { overflow-wrap:anywhere; }
+    .tag { color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; }
+    .codec img { display:block; width:100%; aspect-ratio:1; object-fit:contain; background:#e9eef1; border-block:1px solid var(--line); }
+    .stats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:10px 11px; font-variant-numeric:tabular-nums; }
+    .stat { min-width:0; font-size:13px; overflow-wrap:anywhere; }
+    .stat span { display:block; color:var(--muted); font-size:10px; }
+    .detail { min-height:34px; padding:0 11px 10px; color:var(--muted); font-size:11px; }
+    .unavailable { padding:17px 12px; color:var(--muted); }
+    .badge { display:inline-block; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:700; background:#e4f4eb; color:var(--green); }
+    .badge.lossy { background:#fff0dc; color:var(--gold); }
+    .change-layout { display:grid; grid-template-columns:minmax(160px,240px) minmax(0,1fr); align-items:start; gap:14px; margin:14px 0; }
+    .change-layout canvas { width:100%; aspect-ratio:1; background:white; border:1px solid var(--line); }
+    .section { padding:20px 0; border-bottom:1px solid var(--line); }
+    .compare-tools { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; max-width:880px; margin:14px 0; }
+    .compare-box { min-width:0; background:white; border:1px solid var(--line); padding:12px; border-radius:4px; }
+    .slider-stage { position:relative; width:min(100%,640px); aspect-ratio:1; overflow:hidden; background:#e9eef1; border:1px solid var(--line); }
+    .slider-stage img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+    #sliderTop { clip-path:inset(0 50% 0 0); }
+    #heatmap { display:none; width:min(100%,640px); aspect-ratio:1; border:1px solid var(--line); }
+    canvas.chart { display:block; width:100%; height:260px; background:white; border:1px solid var(--line); }
+    .gallery { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:11px; padding:14px 0; }
+    .pair-card { min-width:0; border:1px solid var(--line); background:white; border-radius:4px; overflow:hidden; text-align:left; padding:0; cursor:pointer; color:inherit; }
+    .pair-card img { width:100%; aspect-ratio:1; display:block; object-fit:contain; background:#e9eef1; }
+    .pair-card span { display:block; padding:8px; font-size:12px; }
+    .pair-card small { display:block; color:var(--muted); }
+    .two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; background:white; font-size:12px; font-variant-numeric:tabular-nums; }
+    th,td { padding:8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+    th:first-child,td:first-child { text-align:left; }
+    details { padding:10px 0; border-top:1px solid var(--line); }
+    summary { cursor:pointer; font-weight:650; }
+    .step-buttons { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+    .step-buttons button { margin:0; background:#fff; color:var(--ink); border:1px solid var(--line); border-radius:4px; padding:8px 10px; cursor:pointer; }
+    .step-buttons button[aria-pressed="true"] { border-color:var(--blue); color:var(--blue); }
+    .footnote { font-size:12px; }
+    @media(max-width:980px) { .gallery { grid-template-columns:repeat(3,minmax(0,1fr)); } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:650px) { main { padding:14px 12px 36px; } header { align-items:flex-start; flex-direction:column; } .warning { max-width:none; } .grid,.gallery,.two,.compare-tools { grid-template-columns:1fr; } .change-layout { grid-template-columns:120px minmax(0,1fr); } .tab { flex:1; padding-inline:6px; } .toolbar > div { width:100%; } input,select { width:100%; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><div class="eyebrow">Epoch-27 checkpoints · local CPU inference · 512×512 working canvas</div><h1>DeltaShot screenshot codec</h1></div>
+    <div class="warning"><b>Neural codecs are lossy.</b> Delta+PNG is the lossless reference-based path. Reference decoding requires the same reference image.</div>
+  </header>
+  <nav class="tabs" aria-label="Demo sections">
+    <button class="tab" role="tab" id="tab-live" aria-selected="true" aria-controls="panel-live" data-tab="live">Live demo</button>
+    <button class="tab" role="tab" id="tab-premade" aria-selected="false" aria-controls="panel-premade" data-tab="premade">Premade demos</button>
+  </nav>
+
+  <section class="panel active" role="tabpanel" id="panel-live" aria-labelledby="tab-live">
+    <div class="toolbar">
+      <div><label for="pair-select">Load a website pair</label><select id="pair-select"><option value="">Choose a pair…</option></select></div>
+      <div><label for="target">Target screenshot</label><input id="target" type="file" accept="image/png,image/jpeg,image/webp"></div>
+      <div><label for="reference">Reference (optional)</label><input id="reference" type="file" accept="image/png,image/jpeg,image/webp"></div>
+      <button id="run" class="action" type="button">Encode and decode</button>
+    </div>
+    <div id="pair-preview" class="pair-preview" hidden><figure><img id="pair-reference-thumb" alt="Selected pair reference"><figcaption>Pair reference</figcaption></figure><figure><img id="pair-target-thumb" alt="Selected pair target"><figcaption>Pair target</figcaption></figure></div>
+    <div id="live-status" class="status" role="status"></div>
+    <p id="run-meta" class="footnote">Original upload size is shown separately. Codec bytes and PSNR use the fitted 512×512 working image.</p>
+    <div class="change-layout">
+      <canvas id="change-map" width="256" height="256" aria-label="Reference and target change map"></canvas>
+      <div><h2>Reference change map</h2><p id="change-report">Choose a pair with a reference to calculate changed pixels and its bucket.</p><p class="footnote">A pixel counts as changed if any RGB channel differs by more than 3. Buckets use the project thresholds.</p></div>
+    </div>
+    <div class="section"><h2>Codec outputs</h2><div id="results" class="grid" aria-live="polite"></div></div>
+    <div class="section">
+      <h2>Compare original and reconstruction</h2>
+      <div class="compare-tools">
+        <div class="compare-box"><label for="compare-method">Decoded method</label><select id="compare-method"></select></div>
+        <div class="compare-box"><label for="compare-slider">Before / after position</label><input id="compare-slider" type="range" min="0" max="100" value="50"><span id="slider-value">50%</span></div>
+        <div class="compare-box"><label>Difference view</label><button id="heatmap-toggle" type="button">Show amplified difference</button></div>
+      </div>
+      <div id="slider-stage" class="slider-stage"><img id="sliderBase" alt="Original target"><img id="sliderTop" alt="Selected reconstruction"></div>
+      <canvas id="heatmap" width="512" height="512" aria-label="Amplified pixel difference"></canvas>
+    </div>
+    <div class="section"><h2>Encoded bytes by method</h2><canvas id="bytes-chart" class="chart" width="1100" height="280"></canvas></div>
+  </section>
+
+  <section class="panel" role="tabpanel" id="panel-premade" aria-labelledby="tab-premade">
+    <div class="section">
+      <h2>Premade pair gallery</h2>
+      <p class="footnote">Real version captures are demo material only. Modified samples are copied from the held-out test split and are not new benchmark observations.</p>
+      <div class="toolbar">
+        <div><label for="filter-bucket">Change bucket</label><select id="filter-bucket"><option value="all">All buckets</option><option>identical</option><option>minor</option><option>moderate</option><option>major</option><option>unrelated</option></select></div>
+        <div><label for="filter-origin">Origin</label><select id="filter-origin"><option value="all">Real and modified</option><option value="real">Real</option><option value="synthetic">Modified</option></select></div>
+      </div>
+      <div id="premade-status" class="muted-box" hidden></div>
+      <div id="gallery" class="gallery"></div>
+      <div id="premade-results" class="grid"></div>
+    </div>
+    <div class="section">
+      <h2>Results by bucket</h2>
+      <div class="toolbar"><div><label for="result-metric">Metric</label><select id="result-metric"><option value="bpp">Bits per pixel</option><option value="psnr_db">PSNR (dB)</option><option value="ms_ssim">MS-SSIM</option></select></div></div>
+      <p id="result-scale" class="footnote">Source: results/pipeline_summary.json.</p><canvas id="bucket-chart" class="chart" width="1100" height="280"></canvas>
+      <div id="bucket-table" class="table-wrap"></div>
+    </div>
+    <div class="section">
+      <h2>How the codec works</h2>
+      <div class="step-buttons" id="steps">
+        <button type="button" data-step="reference" aria-pressed="true">Reference features</button><button type="button" data-step="analysis" aria-pressed="false">Analysis transform</button><button type="button" data-step="quantize" aria-pressed="false">Quantize</button><button type="button" data-step="entropy" aria-pressed="false">Entropy model</button><button type="button" data-step="decode" aria-pressed="false">Decode</button>
+      </div><p id="step-explanation"></p>
+    </div>
+    <div class="section">
+      <h2>Mode Selection explorer</h2>
+      <div class="toolbar"><div><label for="mode-pair">Evaluation pair</label><select id="mode-pair"><option value="">Choose a stored evaluation pair…</option></select></div><div><label for="lambda">λ: <span id="lambda-value">0.013</span></label><input id="lambda" type="range" min="0" max="0.08" step="0.001" value="0.013"></div></div>
+      <p class="footnote">Uses the selected pair's stored estimated bpp and MSE from the 500-pair evaluation; reference mode adds the one-bit flag. This is an explorer, not a fresh benchmark.</p><div id="mode-result" class="muted-box"></div>
+    </div>
+    <div class="section"><h2>Training curves</h2><p class="footnote">Epoch-level last logged loss values from the saved metrics JSON files.</p><canvas id="loss-chart" class="chart" width="1100" height="280"></canvas></div>
+  </section>
+</main>
+<script>
+(() => {
+  const $ = selector => document.querySelector(selector);
+  const state = {data:null, current:null, targetUrl:null, referenceUrl:null, selectedImage:null, pairFiles:false};
+  const buckets = ['identical','minor','moderate','major','unrelated'];
+  const stepText = {
+    reference:'The reference screenshot is encoded into a feature pyramid and resized to the latent grid. It is side information available to both encoder and decoder.',
+    analysis:'The analysis transform maps the target into a compact latent representation. In the conditioned codec, reference features are concatenated with the target features.',
+    quantize:'Latents are quantized before entropy coding. This discards precision, so the neural reconstruction is lossy.',
+    entropy:'A hyperprior predicts probability distributions for latent symbols. CompressAI uses those distributions to write the actual entropy-coded streams.',
+    decode:'The receiver reads the .bin container and decodes its saved streams. The reference-conditioned path also needs the same reference image at decode time.'
+  };
+  const methodNames = ['jpeg','webp','delta_png','no_reference','reference_conditioned','mode_selection'];
+  const title = key => ({jpeg:'JPEG q75',webp:'WebP q75',delta_png:'Delta+PNG',no_reference:'No-Reference',reference_conditioned:'Reference-Conditioned',mode_selection:'Mode Selection'})[key] || key;
+  const originLabel = origin => origin === 'synthetic' ? 'Modified' : 'Real';
+  const fmt = (value, digits=3) => value == null || !Number.isFinite(Number(value)) ? 'n/a' : Number(value).toFixed(digits);
+  function tab(name) {
+    document.querySelectorAll('.tab').forEach(button => button.setAttribute('aria-selected', String(button.dataset.tab === name)));
+    document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${name}`));
+  }
+  document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => tab(button.dataset.tab)));
+  function sampleUrl(path) { return '/samples/' + path.split('/').map(encodeURIComponent).join('/'); }
+  async function fileFromUrl(url, name) { const response=await fetch(url); if(!response.ok) throw new Error(`Could not load ${name}`); return new File([await response.blob()],name,{type:'image/png'}); }
+  async function selectPair(pair) {
+    const target=await fileFromUrl(sampleUrl(pair.target),`${pair.id}_target.png`);
+    const reference=await fileFromUrl(sampleUrl(pair.reference),`${pair.id}_reference.png`);
+    const transfer1=new DataTransfer(); transfer1.items.add(target); $('#target').files=transfer1.files;
+    const transfer2=new DataTransfer(); transfer2.items.add(reference); $('#reference').files=transfer2.files;
+    state.pairFiles=true;
+    $('#pair-select').value=pair.id;
+    state.targetUrl=sampleUrl(pair.target); state.referenceUrl=sampleUrl(pair.reference);
+    $('#pair-preview').hidden=false;$('#pair-reference-thumb').src=state.referenceUrl;$('#pair-target-thumb').src=state.targetUrl;
+    await loadChangeMap(state.targetUrl,state.referenceUrl);
+    return {target,reference};
+  }
+  function loadImage(src) { return new Promise((resolve,reject)=>{ const image=new Image(); image.onload=()=>resolve(image); image.onerror=()=>reject(new Error('Could not open a selected screenshot')); image.src=src; }); }
+  async function loadChangeMap(targetUrl,referenceUrl) {
+    if(!targetUrl||!referenceUrl) { $('#change-report').textContent='A reference is not selected; change analysis is unavailable.'; return; }
+    const [target,reference]=await Promise.all([loadImage(targetUrl),loadImage(referenceUrl)]);
+    const canvas=$('#change-map'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(target,0,0,canvas.width,canvas.height);
+    const t=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(reference,0,0,canvas.width,canvas.height);
+    const r=ctx.getImageData(0,0,canvas.width,canvas.height).data, out=ctx.createImageData(canvas.width,canvas.height); let changed=0;
+    for(let i=0;i<t.length;i+=4) { const diff=Math.max(Math.abs(t[i]-r[i]),Math.abs(t[i+1]-r[i+1]),Math.abs(t[i+2]-r[i+2]))>3; if(diff) changed++; out.data[i]=diff?210:245;out.data[i+1]=diff?62:247;out.data[i+2]=diff?48:249;out.data[i+3]=255; }
+    ctx.putImageData(out,0,0); const ratio=changed/(canvas.width*canvas.height); const bucket=ratio<=.0001?'identical':ratio<.02?'minor':ratio<.15?'moderate':ratio<=.5?'major':'unrelated';
+    $('#change-report').textContent=`${(ratio*100).toFixed(2)}% pixels changed · ${bucket} bucket.`;
+  }
+  function bestFile(results) { return results.filter(x=>x.available!==false&&x.bytes>0&&!/^Input|^Original/.test(x.label)).reduce((best,x)=>!best||x.bytes<best.bytes?x:best,null); }
+  function renderCard(item,best) {
+    const card=document.createElement('article');card.className='codec'; const top=document.createElement('div');top.className='codec-top';
+    const h=document.createElement('h3');h.textContent=item.label;const tag=document.createElement('span');tag.className='tag';tag.textContent=item.available===false?'Unavailable':item.lossless?'Lossless':'Lossy';top.append(h,tag);card.append(top);
+    if(item.available===false){const note=document.createElement('div');note.className='unavailable';note.textContent=item.note||'Not available';card.append(note);return card;}
+    const image=document.createElement('img');image.src=item.image_data||item.decoded_file_url||'';image.alt=`${item.label} decoded image`;card.append(image);
+    const stats=document.createElement('div');stats.className='stats';
+    const entries=[['Bytes',item.bytes==null?'n/a':`${Number(item.bytes).toLocaleString()} B`],['Actual bpp',fmt(item.actual_bpp)],['PSNR',item.psnr_label||'n/a']];
+    if(item.estimated_bpp!=null) entries.push(['Estimated bpp',fmt(item.estimated_bpp)]);
+    for(const [label,value] of entries){const el=document.createElement('div');el.className='stat';const span=document.createElement('span');span.textContent=label;const strong=document.createElement('strong');strong.textContent=value;el.append(span,strong);stats.append(el);}
+    card.append(stats);const detail=document.createElement('div');detail.className='detail';detail.textContent=item.note||'';
+    if(best===item){const badge=document.createElement('span');badge.className='badge';badge.textContent='Smallest encoded file';detail.append(document.createTextNode(' '),badge);}
+    card.append(detail);return card;
+  }
+  function showResults(results,meta={}) {
+    state.current=results;const best=bestFile(results);const grid=$('#results');grid.replaceChildren(...results.map(item=>renderCard(item,best)));
+    $('#premade-results').replaceChildren(...results.map(item=>renderCard(item,best)));
+    const methods=results.filter(item=>item.available!==false&&item.image_data||item.decoded_file_url);
+    const choose=$('#compare-method');choose.replaceChildren(...methods.map((item,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=item.label;return option;}));
+    state.targetUrl=meta.targetUrl||state.targetUrl;
+    if(state.targetUrl) loadImage(state.targetUrl).then(image=>{$('#sliderBase').src=state.targetUrl;resizeSliderImage($('#sliderBase'),image);});
+    if(methods.length) setCompare(methods[0]); drawBytes(results);
+    if(meta.originalSize&&meta.workingSize) $('#run-meta').textContent=`Upload ${meta.originalSize[0]}×${meta.originalSize[1]} → working ${meta.workingSize[0]}×${meta.workingSize[1]}. Bytes and PSNR use the 512×512 working image. ${meta.note||''}`;
+  }
+  function resizeSliderImage(el,image){el.style.objectFit='contain';}
+  async function setCompare(item) {
+    const source=item.image_data||item.decoded_file_url;if(!source)return;
+    $('#sliderTop').src=source;$('#sliderTop').style.clipPath=`inset(0 ${100-Number($('#compare-slider').value)}% 0 0)`;
+    state.selectedImage=await loadImage(source); if($('#heatmap-toggle').dataset.active==='true') drawHeatmap();
+  }
+  $('#compare-method').addEventListener('change',()=>{const item=state.current.filter(x=>x.available!==false&&x.image_data||x.decoded_file_url)[Number($('#compare-method').value)];if(item)setCompare(item);});
+  $('#compare-slider').addEventListener('input',event=>{$('#sliderTop').style.clipPath=`inset(0 ${100-event.target.value}% 0 0)`;$('#slider-value').textContent=`${event.target.value}%`;});
+  function drawHeatmap(){if(!state.targetUrl||!state.selectedImage)return;Promise.all([loadImage(state.targetUrl),Promise.resolve(state.selectedImage)]).then(([base,decoded])=>{const c=$('#heatmap'),ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(base,0,0,c.width,c.height);const a=ctx.getImageData(0,0,c.width,c.height);ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(decoded,0,0,c.width,c.height);const b=ctx.getImageData(0,0,c.width,c.height),out=ctx.createImageData(c.width,c.height);for(let i=0;i<a.data.length;i+=4){const d=Math.min(255,Math.max(Math.abs(a.data[i]-b.data[i]),Math.abs(a.data[i+1]-b.data[i+1]),Math.abs(a.data[i+2]-b.data[i+2]))*8);out.data[i]=d;out.data[i+1]=Math.max(0,120-d);out.data[i+2]=255-d;out.data[i+3]=255;}ctx.putImageData(out,0,0);});}
+  $('#heatmap-toggle').addEventListener('click',event=>{const active=event.currentTarget.dataset.active!=='true';event.currentTarget.dataset.active=String(active);event.currentTarget.textContent=active?'Hide amplified difference':'Show amplified difference';$('#slider-stage').style.display=active?'none':'block';$('#heatmap').style.display=active?'block':'none';if(active)drawHeatmap();});
+  function drawBytes(results){const c=$('#bytes-chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);const rows=results.filter(x=>x.available!==false&&x.bytes!=null&&!/^Input|^Original/.test(x.label));if(!rows.length){ctx.fillText('No encoded file measurements available.',20,35);return;}const max=Math.max(...rows.map(x=>x.bytes));const plotW=c.width-280,rowH=34;ctx.font='13px system-ui';rows.forEach((x,i)=>{const y=20+i*rowH;ctx.fillStyle='#33434f';ctx.fillText(x.label.slice(0,32),10,y+18);ctx.fillStyle=x.lossless?'#20835a':'#2176a5';ctx.fillRect(250,y,Math.max(2,plotW*x.bytes/max),20);ctx.fillStyle='#17232d';ctx.fillText(`${Number(x.bytes).toLocaleString()} B`,260+plotW*x.bytes/max,y+16);});}
+  async function imageDimensions(file){const url=URL.createObjectURL(file);const image=await loadImage(url);return [image.naturalWidth,image.naturalHeight];}
+  async function runLive(){const target=$('#target').files[0];if(!target){$('#live-status').textContent='Choose a target screenshot first.';$('#live-status').className='status error';return;}const button=$('#run');button.disabled=true;$('#live-status').className='status';$('#live-status').textContent='Encoding and decoding…';try{const payload={target:await loadFile(target),reference:$('#reference').files[0]?await loadFile($('#reference').files[0]):null};const health=await fetch('/health').then(x=>x.json());const endpoint=health.neural_available===false?'/api/classical':'/api/compress';const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const text=await response.text();let data;try{data=JSON.parse(text);}catch{throw new Error(response.ok?'Server returned an invalid response.':text||`HTTP ${response.status}`);}if(!response.ok)throw new Error(data.error||`HTTP ${response.status}: no diagnostic returned`);const originalSize=data.manifest?.original_size||await imageDimensions(target);showResults(data.results,{originalSize,workingSize:data.manifest?.working_size||data.working_size,note:data.neural_status||''});state.targetUrl=URL.createObjectURL(target);$('#sliderBase').src=state.targetUrl;if(data.change_analysis){const c=data.change_analysis;$('#change-report').textContent=`${(c.changed_pixel_ratio*100).toFixed(2)}% pixels changed · ${c.bucket} bucket.`;if(payload.reference){state.referenceUrl=URL.createObjectURL($('#reference').files[0]);loadChangeMap(state.targetUrl,state.referenceUrl);}}else{$('#change-report').textContent='No reference supplied; change analysis is unavailable.';}$('#live-status').textContent=health.neural_available===false?'Classical outputs computed locally; neural premade results are not available.':'Complete. Neural decoding used the written .bin files.';}catch(error){$('#live-status').textContent=error.message;$('#live-status').className='status error';}finally{button.disabled=false;}}
+  function loadFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve({filename:file.name,data:String(reader.result).split(',')[1]});reader.onerror=()=>reject(new Error(`Could not read ${file.name}`));reader.readAsDataURL(file);});}
+  $('#run').addEventListener('click',runLive);
+  $('#target').addEventListener('change',()=>{const file=$('#target').files[0];if(file){state.targetUrl=URL.createObjectURL(file);$('#sliderBase').src=state.targetUrl;}});
+  $('#reference').addEventListener('change',()=>{const file=$('#reference').files[0];if(file){state.referenceUrl=URL.createObjectURL(file);if(state.targetUrl)loadChangeMap(state.targetUrl,state.referenceUrl);}});
+  $('#pair-select').addEventListener('change',async event=>{const pair=(state.data?.pairs?.pairs||[]).find(x=>x.id===event.target.value);if(!pair)return;try{await selectPair(pair);$('#live-status').textContent=`Loaded ${pair.id}; choose Encode and decode.`;}catch(error){$('#live-status').textContent=error.message;}});
+  $('#target').addEventListener('change',()=>{if(!$('#target').files.length)return;if(state.pairFiles){$('#reference').value='';state.pairFiles=false;}$('#pair-select').value='';state.targetUrl=null;state.referenceUrl=null;$('#pair-preview').hidden=true;$('#change-report').textContent='Upload a reference to analyze changes and assign a bucket.';$('#change-map').getContext('2d').clearRect(0,0,256,256);});
+  $('#reference').addEventListener('change',()=>{if(state.pairFiles){$('#pair-select').value='';state.pairFiles=false;$('#pair-preview').hidden=true;}state.referenceUrl=null;});
+  function renderGallery(){const manifest=state.data?.pairs;const gallery=$('#gallery');gallery.replaceChildren();const premade=state.data?.premade?.pairs||[];const premadeById=new Map(premade.map(x=>[x.id,x]));const bucket=$('#filter-bucket').value,origin=$('#filter-origin').value;const pairs=(manifest?.pairs||[]).filter(x=>(bucket==='all'||x.bucket===bucket)&&(origin==='all'||x.origin===origin));for(const pair of pairs){const button=document.createElement('button');button.className='pair-card';button.type='button';const img=document.createElement('img');img.src=sampleUrl(pair.target);img.alt=`${pair.id} target`;const text=document.createElement('span');text.textContent=pair.id;const small=document.createElement('small');small.textContent=`${originLabel(pair.origin)} · ${pair.bucket||'bucket n/a'}${premadeById.has(pair.id)?' · encoded':''}`;text.append(small);button.append(img,text);button.addEventListener('click',()=>openPremade(pair,premadeById.get(pair.id)));gallery.append(button);}const status=$('#premade-status');if(!manifest?.pairs?.length){status.hidden=false;status.textContent=`Pair manifest is missing. Run ${state.data?.premade_command||'.\\scripts\\wsl\\build_premade_demos.ps1'} to prepare captures and precomputed results.`;}else if(!state.data?.premade?.pairs?.length){status.hidden=false;status.textContent=`Premade codec manifest is missing. Run ${state.data?.premade_command||'.\\scripts\\wsl\\build_premade_demos.ps1'}. Classical JPEG/WebP/Delta+PNG previews remain available when you open a pair.`;}else{status.hidden=true;}}
+  async function openPremade(pair,record){try{await selectPair(pair);if(record){const methods=(record.methods||[]).map(item=>({...item,image_data:item.image_data||item.decoded_file_url||(item.label.startsWith('Original target')?sampleUrl(pair.target):null)}));showResults(methods,{workingSize:record.working_size,note:`Premade · ${originLabel(record.origin)} · ${record.bucket||'bucket n/a'}.`});$('#live-status').textContent='Showing stored premade codec outputs.';}else{const target=$('#target').files[0],reference=$('#reference').files[0];const payload={target:await loadFile(target),reference:await loadFile(reference)};const response=await fetch('/api/classical',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Classical preview failed.');showResults(data.results,{originalSize:data.original_size,workingSize:data.working_size,note:data.neural_status});$('#live-status').textContent=data.neural_status;$('#premade-status').hidden=false;$('#premade-status').textContent=`No premade model output for ${pair.id}. Showing computed classical baselines only. Run ${state.data.premade_command} to create neural premade outputs.`;}tab('live');}catch(error){$('#premade-status').hidden=false;$('#premade-status').textContent=error.message;}}
+  $('#filter-bucket').addEventListener('change',renderGallery);$('#filter-origin').addEventListener('change',renderGallery);
+  function metricValue(bucket,key,metric){const row=state.data?.summary?.by_bucket?.[bucket]||{};const object=row[key]||{};if(metric==='bpp'){if(key==='jpeg'||key==='webp')return row.classical?.[key==='jpeg'?'jpeg_q75':'webp_q75']?.bpp;if(key==='delta_png')return row.classical?.delta_png?.bpp;return object.estimated_bpp_from_likelihoods;}return object[metric]??null;}
+  function drawBucketChart(){const c=$('#bucket-chart'),ctx=c.getContext('2d'),metric=$('#result-metric').value;ctx.clearRect(0,0,c.width,c.height);const keys=['no_reference','reference_conditioned','mode_selection','jpeg','webp','delta_png'];const values=buckets.flatMap(b=>keys.map(k=>metricValue(b,k,metric))).filter(v=>v!=null&&Number.isFinite(v));if(!values.length){ctx.fillText('Evaluation summary is unavailable.',20,35);return;}const min=Math.min(0,...values),max=Math.max(...values),colors=['#176da5','#13825b','#785b9c','#cd6a32','#278b9c','#787e84'];const plot={x:58,y:18,w:c.width-78,h:c.height-55};ctx.strokeStyle='#aab5bd';ctx.beginPath();ctx.moveTo(plot.x,plot.y);ctx.lineTo(plot.x,plot.y+plot.h);ctx.lineTo(plot.x+plot.w,plot.y+plot.h);ctx.stroke();const groupW=plot.w/buckets.length,barW=groupW/(keys.length+1);buckets.forEach((b,bi)=>{keys.forEach((k,ki)=>{const value=metricValue(b,k,metric);if(value==null||!Number.isFinite(value))return;const height=(value-min)/(max-min||1)*(plot.h-24);const x=plot.x+bi*groupW+(ki+.5)*barW;ctx.fillStyle=colors[ki];ctx.fillRect(x,plot.y+plot.h-height,Math.max(3,barW-3),height);});ctx.fillStyle='#33434f';ctx.textAlign='center';ctx.fillText(b,plot.x+(bi+.5)*groupW,plot.y+plot.h+18);});ctx.textAlign='left';keys.forEach((k,i)=>{ctx.fillStyle=colors[i];ctx.fillRect(plot.x+i*150,6,10,10);ctx.fillStyle='#33434f';ctx.fillText(title(k),plot.x+i*150+15,15);});}
+  function renderBucketTable(){const area=$('#bucket-table');if(!state.data?.summary){area.textContent='results/pipeline_summary.json is missing.';return;}const metric=$('#result-metric').value;let html='<table><thead><tr><th>Bucket</th><th>Pairs</th>'+['no_reference','reference_conditioned','mode_selection','jpeg','webp','delta_png'].map(k=>`<th>${title(k)}</th>`).join('')+'</tr></thead><tbody>';for(const b of buckets){const n=state.data.summary.by_bucket?.[b]?.pair_count??'n/a';html+=`<tr><td>${b}</td><td>${n}</td>`+['no_reference','reference_conditioned','mode_selection','jpeg','webp','delta_png'].map(k=>`<td>${fmt(metricValue(b,k,metric),metric==='ms_ssim'?5:2)}</td>`).join('')+'</tr>';}area.innerHTML=html+'</tbody></table>';const summary=state.data.summary;$('#result-scale').textContent=`Source: results/pipeline_summary.json · ${Object.values(summary.by_bucket||{}).reduce((n,x)=>n+(x.pair_count||0),0)} pairs (100 per bucket), one λ=${summary.lambda??'n/a'}, neural bpp estimated from likelihoods.`;}
+  $('#result-metric').addEventListener('change',()=>{drawBucketChart();renderBucketTable();});
+  function renderMode(){const pairId=$('#mode-pair').value,lambda=Number($('#lambda').value),row=(state.data?.evaluation||[]).find(x=>x.pair_id===pairId),n=row?.noref||{},r=row?.reference_conditioned||{};$('#lambda-value').textContent=lambda.toFixed(3);const flag=1/(512*512),jn=n.estimated_bpp_from_likelihoods+lambda*n.mse,jr=r.estimated_bpp_from_likelihoods+flag+lambda*r.mse;const winner=jn<=jr?'No-Reference':'Reference-Conditioned';$('#mode-result').textContent=Number.isFinite(jn)&&Number.isFinite(jr)?`${pairId} (${row.degree_of_change}): J_no-ref=${n.estimated_bpp_from_likelihoods.toFixed(6)} + λ×${n.mse.toFixed(7)} = ${jn.toFixed(6)}; J_ref=${r.estimated_bpp_from_likelihoods.toFixed(6)} + flag ${flag.toFixed(6)} + λ×${r.mse.toFixed(7)} = ${jr.toFixed(6)}. Selected: ${winner}.`:'Choose a pair from the stored 500-row evaluation to inspect its bpp and MSE.';}
+  $('#lambda').addEventListener('input',renderMode);$('#mode-pair').addEventListener('change',renderMode);
+  function drawLoss(){const c=$('#loss-chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);const series=[['No-Reference',state.data?.training?.noref||[],'#176da5'],['Reference-Conditioned',state.data?.training?.reference||[],'#14805b']];for(const [name,rows,color] of series){if(!rows.length)continue;const vals=rows.map(x=>x.loss);const min=Math.min(...vals),max=Math.max(...vals),span=max-min||1;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();rows.forEach((row,i)=>{const x=55+i*(c.width-100)/Math.max(1,rows.length-1),y=c.height-35-(row.loss-min)/span*(c.height-70);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();ctx.fillStyle=color;ctx.fillText(name,65,22+series.indexOf(series.find(s=>s[0]===name))*18);}if(!series.some(x=>x[1].length))ctx.fillText('Training metrics files are missing.',20,35);}
+  $('#steps').addEventListener('click',event=>{const button=event.target.closest('button[data-step]');if(!button)return;document.querySelectorAll('#steps button').forEach(x=>x.setAttribute('aria-pressed',String(x===button)));$('#step-explanation').textContent=stepText[button.dataset.step];});
+  async function init(){try{const response=await fetch('/api/demo-data');if(!response.ok)throw new Error('Could not load local demo data.');state.data=await response.json();const pairs=state.data.pairs?.pairs||[];for(const pair of pairs){const option=document.createElement('option');option.value=pair.id;option.textContent=`${pair.id} · ${originLabel(pair.origin)} · ${pair.bucket||'n/a'}`;$('#pair-select').append(option);}for(const row of state.data.evaluation||[]){const option=document.createElement('option');option.value=row.pair_id;option.textContent=`${row.pair_id} · ${row.degree_of_change}`;$('#mode-pair').append(option);}renderGallery();drawBucketChart();renderBucketTable();renderMode();drawLoss();$('#step-explanation').textContent=stepText.reference;}catch(error){$('#premade-status').hidden=false;$('#premade-status').textContent=error.message;}}
+  init();
+})();
+</script>
+</body>
+</html>
