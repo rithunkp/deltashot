@@ -34,13 +34,6 @@ def fmt(value, digits=4):
     return f"{value:.{digits}f}"
 
 
-def loss_values(path):
-    data = read_json(path, {}) or {}
-    return [{"step": row.get("step"), "loss": row.get("loss")}
-            for row in data.get("history", [])
-            if isinstance(row.get("step"), int) and isinstance(row.get("loss"), (int, float))]
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epoch", type=int, help="Add a matched-checkpoint evaluation section")
@@ -53,12 +46,30 @@ def main():
 
     summary = read_json(ROOT / "results/pipeline_summary.json", {}) or {}
     calibration = read_json(ROOT / "results/pipeline_calibration.json", {}) or {}
+    training_config = read_json(ROOT / "results/pipeline_noref_lambda_00130_metrics.json", {}) or {}
     rows = []
     eval_path = ROOT / "results/pipeline_eval_modes.jsonl"
     if eval_path.exists():
         rows = [json.loads(line) for line in eval_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    no_ref_loss = loss_values(ROOT / "results/pipeline_noref_lambda_00130_metrics.json")
-    ref_loss = loss_values(ROOT / "results/pipeline_reference_lambda_00130_metrics.json")
+    chart_assets = (
+        ("Rate by degree-of-change bucket", "bpp_by_bucket.png"),
+        ("Per-bucket rate summary", "results_bpp_table.png"),
+        ("Mode Selection fallback check", "mode_selection_check.png"),
+        ("Training loss by epoch", "loss_curves.png"),
+    )
+    chart_figures = []
+    for title, filename in chart_assets:
+        src = image_src(ROOT / "slide_assets" / filename)
+        if src:
+            chart_figures.append(
+                f'<figure><img class="report-chart" src="{src}" alt="{html.escape(title)}">'
+                f'<figcaption>{html.escape(title)}</figcaption></figure>'
+            )
+        else:
+            chart_figures.append(
+                f'<figure><p class="notice">Chart unavailable: {html.escape(filename)}</p>'
+                f'<figcaption>{html.escape(title)}</figcaption></figure>'
+            )
 
     table_rows = []
     bucket_summary = summary.get("by_bucket", {})
@@ -107,6 +118,18 @@ def main():
         "device": calibration.get("device"), "reduced": calibration.get("reduced_scale"),
     }
     config_line = " | ".join(f"{key}={value if value is not None else 'n/a'}" for key, value in cfg.items())
+    settings = (
+        (str(training_config.get("epochs", cfg["epochs"] or "n/a")), "epochs", "The model sees the training set this many times."),
+        (f'{training_config.get("patch_size", cfg["crop"] or "n/a")} × {training_config.get("patch_size", cfg["crop"] or "n/a")}', "training crop", "It learns from small image patches, not whole screenshots at once."),
+        (str(training_config.get("batch_size", calibration.get("batch_size", "n/a"))), "batch size", "Four examples are processed before each weight update."),
+        (f'{training_config.get("lmbda", cfg["lambda"] or "n/a"):.4f}' if isinstance(training_config.get("lmbda", cfg["lambda"]), (int, float)) else "n/a", "λ · rate vs. quality", "Sets the trade-off between smaller files and image fidelity."),
+        (f'{training_config.get("train_pairs", calibration.get("pairs_per_epoch", "n/a")):,}', "pairs per epoch", "The number of training examples used in one pass."),
+        ("Adam · 0.0001", "optimizer · learning rate", "Adam updates the weights; the learning rate controls the size of each update."),
+    )
+    settings_html = "".join(
+        f'<article class="setting"><strong>{html.escape(value)}</strong><span>{html.escape(label)}</span><small>{html.escape(explanation)}</small></article>'
+        for value, label, explanation in settings
+    )
     correctness = summary.get("mode_selection", {})
     comparison_lines = []
     for bucket in ("identical", "minor"):
@@ -119,7 +142,6 @@ def main():
             comparison_lines.append(f"{bucket}: Reference-Conditioned has lower mean J at this single lambda.")
         else:
             comparison_lines.append(f"{bucket}: Reference-Conditioned does not beat No-Reference on mean J at this single lambda.")
-    losses_json = json.dumps({"No-Reference": no_ref_loss, "Reference-Conditioned": ref_loss}, allow_nan=False)
     status_color = "var(--green)" if correctness.get("status") == "PASS" else "var(--red)"
     matched_section = ""
     if args.epoch is not None:
@@ -175,16 +197,17 @@ def main():
 *{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,sans-serif}}
 main{{max-width:1240px;margin:auto;padding:32px 24px 64px}}header{{border-bottom:1px solid var(--line);padding:8px 0 24px}}h1{{font-size:32px;margin:0 0 8px}}h2{{margin:32px 0 12px;font-size:22px}}h3{{margin:20px 0 10px;font-size:18px}}p{{color:var(--muted);max-width:900px}}.notice{{border-left:4px solid var(--blue);padding:12px 16px;background:#eaf3fa;max-width:none}}
 .table-wrap{{overflow-x:auto}}table{{border-collapse:collapse;width:100%;background:white;font-variant-numeric:tabular-nums}}th,td{{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}}th{{background:#edf1f5;font-size:12px;color:#43515e}}td:first-child,th:first-child{{text-align:left}}.status{{display:inline-block;padding:2px 8px;border-radius:4px;font-weight:700;color:white;background:{status_color}}}
-.examples{{display:grid;grid-template-columns:1fr;gap:10px}}.example{{border-top:1px solid var(--line);padding:10px 0}}.images{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}}figure{{margin:0;min-width:0}}figcaption{{font-size:12px;color:var(--muted);margin-bottom:4px}}figure img{{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:white;border:1px solid var(--line)}}canvas{{width:100%;height:240px;background:white;border:1px solid var(--line)}}.small{{font-size:13px}}code{{background:#edf1f5;padding:2px 4px;border-radius:3px}}@media(max-width:700px){{main{{padding:20px 14px}}h1{{font-size:26px}}.images{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
+.settings{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}}.setting{{display:flex;flex-direction:column;justify-content:center;min-height:126px;padding:14px;background:#edf2f6;border-radius:6px;text-align:center}}.setting strong{{font-size:25px;color:#17364d}}.setting span{{font-size:14px;color:#43515e}}.setting small{{margin-top:7px;color:var(--muted);font-size:12px}}
+.examples{{display:grid;grid-template-columns:1fr;gap:10px}}.example{{border-top:1px solid var(--line);padding:10px 0}}.images{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}}figure{{margin:0;min-width:0}}figcaption{{font-size:12px;color:var(--muted);margin:6px 0 0}}figure img{{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:white;border:1px solid var(--line)}}.report-charts{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}}.report-charts figure{{background:white;border:1px solid var(--line);padding:8px}}.report-charts img.report-chart{{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;border:0;background:white}}.small{{font-size:13px}}code{{background:#edf1f5;padding:2px 4px;border-radius:3px}}@media(max-width:700px){{main{{padding:20px 14px}}h1{{font-size:26px}}.images,.report-charts{{grid-template-columns:1fr}}.settings{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 </style></head><body><main>
 <header><h1>DeltaShot | Run evidence</h1><p>DeltaShot tests whether a target UI screenshot can be compressed using an available earlier reference while preserving standalone fallback for unrelated pages. This run is preliminary evidence, not a conclusion: bpp is estimated from model likelihoods, only one lambda is evaluated, and the results are reduced-scale where noted.</p><p class="notice">Mode Selection unrelated-bucket check: <span class="status">{html.escape(str(correctness.get('status', 'NOT RUN')))}</span> {html.escape(str(correctness.get('reason', 'No summary available.')))}</p></header>
 {matched_section}
+<h2>Settings at a glance</h2><p class="small">These describe how the current checkpoints were trained. λ is the compression-versus-quality trade-off; learning rate is the optimizer's weight-update step size.</p><div class="settings">{settings_html}</div>
 <h2>Per-Bucket Results</h2><p class="small">{html.escape(config_line)}. Neural bpp is estimated from likelihoods; JPEG/WebP are quality 75 and Delta+PNG values are from existing per-pair baseline records. Metrics are means over the evaluated subset. Missing entries are shown as n/a, not imputed.</p>
 <div class="table-wrap"><table><thead><tr><th>Change bucket</th><th>Pairs</th><th>No-ref bpp</th><th>No-ref PSNR</th><th>Ref bpp</th><th>Ref PSNR</th><th>Mode bpp</th><th>Mode PSNR</th><th>JPEG bpp</th><th>WebP bpp</th><th>Delta+PNG bpp</th></tr></thead><tbody>{''.join(table_rows)}</tbody></table></div>
-<h2>Training Loss</h2><p class="small">Recorded samples only. No curve is drawn for a model without a metrics artifact.</p><canvas id="loss" width="1200" height="260" aria-label="Training loss curve"></canvas>
+<h2>Evaluation and Training Charts</h2><p class="small">Updated figures from the latest locally generated slide assets. Neural bpp is likelihood-estimated; the rate chart uses the documented per-bucket baseline settings. The training curve shows logged training loss by epoch, not validation loss.</p><div class="report-charts">{''.join(chart_figures)}</div>
 <h2>Reconstructions</h2><p class="small">Examples are selected from the evaluated test subset. Rows are shown for each degree-of-change bucket.</p><div class="examples">{''.join(example_sections)}</div>
 <h2>Status &amp; Caveats</h2><p>Training/evaluation scale: {html.escape(config_line)}. {'REDUCED-SCALE run; do not report as final.' if cfg['reduced'] else 'Full configured scale.'}</p><p>{html.escape(' '.join(comparison_lines))}</p><p>Mode rule: {html.escape(str(correctness.get('rule', 'not available')))} Correctness compares per-pair J in the unrelated bucket and includes the flag bit for reference mode. This is not a multi-lambda BD-rate result. Cross-attention, full benchmark, and final claims remain pending.</p>
-<script>const series={losses_json};const c=document.getElementById('loss'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);const colors=['#1769aa','#17805d'];let idx=0;for(const [name,points] of Object.entries(series)){{if(!points.length)continue;const vals=points.map(p=>p.loss).filter(Number.isFinite);if(!vals.length)continue;const lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(hi-lo,1e-9);ctx.strokeStyle=colors[idx++%colors.length];ctx.lineWidth=2;ctx.beginPath();points.forEach((p,i)=>{{const x=50+i*Math.max(1,(c.width-100)/(points.length-1));const y=c.height-30-(p.loss-lo)/span*(c.height-65);i?ctx.lineTo(x,y):ctx.moveTo(x,y)}});ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.fillText(name,65,20+idx*18)}}ctx.strokeStyle='#687582';ctx.beginPath();ctx.moveTo(45,15);ctx.lineTo(45,c.height-30);ctx.lineTo(c.width-15,c.height-30);ctx.stroke();</script>
 </main></body></html>'''
     (ROOT / "results/demo.html").write_text(html_doc, encoding="utf-8")
     print("Wrote results/demo.html")

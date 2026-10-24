@@ -55,3 +55,7 @@ Some CompressAI-dependent tests are skipped when CompressAI is unavailable in th
 - `website_screenshots/` — demo screenshot pairs and manifest
 - `PROJECT_STATE.md` — milestone status and handoff log
 - `RUNBOOK.md` — environment and execution instructions
+
+## Contribution code map
+
+See [CONTRIBUTION_CODE_GUIDE.md](CONTRIBUTION_CODE_GUIDE.md) for the essential source files each contributor should study and the support/generated code they can skip.

@@ -1,11 +1,23 @@
 # Python environments and caches
 .venv/
 .venv_*/
+/venv/
+/env/
 __pycache__/
 *.py[cod]
+*.egg-info/
+/build/
+/dist/
 .pytest_cache/
 .pytest_tmp*/
+/.pytest-*/
 .uv-cache/
+.mypy_cache/
+.ruff_cache/
+.cache/huggingface/
+/htmlcov/
+/.coverage
+/.coverage.*
 
 # Local configuration and credentials
 .env
@@ -23,12 +35,18 @@ __pycache__/
 /gpu_portable/data/*.zip
 *.pth
 *.pt
+*.bin
 
 # Evaluation, demo runs, downloaded Hub artifacts, and logs
 /results/*
 !/results/.gitkeep
 /hf_results/
 *.log
+
+# Generated charts/reports; keep the scripts that create them
+/slide_assets/*
+!/slide_assets/*.py
+!/slide_assets/*.ps1
 
 # Editor and operating-system files
 .vscode/

@@ -38,6 +38,12 @@ PREMADE_ROOT = ROOT / "results" / "premade_demos"
 PREMADE_RUNS = PREMADE_ROOT / "runs"
 CHECKPOINTS = ROOT / "checkpoints"
 OUTPUT_ROOT = ROOT / "results" / "local_demo_runs"
+CHART_ASSETS = {
+    "bpp_by_bucket.png",
+    "results_bpp_table.png",
+    "mode_selection_check.png",
+    "loss_curves.png",
+}
 MULTIPLE = 64
 JPEG_QUALITY = 75
 WEBP_QUALITY = 75
@@ -414,7 +420,21 @@ class DemoHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/files/"):
             self._serve_file(self.path)
             return
+        if self.path.startswith("/charts/"):
+            self._serve_chart(self.path)
+            return
         self._send_error_json(404, f"No route for {self.path}")
+
+    def _serve_chart(self, request_path):
+        filename = unquote(request_path.removeprefix("/charts/"))
+        if filename not in CHART_ASSETS:
+            self._send_error_json(404, "Requested chart is not available")
+            return
+        path = ROOT / "slide_assets" / filename
+        if not path.is_file():
+            self._send_error_json(404, f"Chart asset is missing: {filename}")
+            return
+        self._send(200, path.read_bytes(), "image/png")
 
     def _serve_file(self, request_path):
         parts = [unquote(part) for part in request_path.split("/")[2:]]
