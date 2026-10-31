@@ -1,0 +1,92 @@
+\begin{longtable}{llrrrr}
+\caption{Full-test baseline sweep by bucket ($n=400$ per bucket).}\label{tab:fullsweep}\\
+\toprule
+Bucket & Codec & Setting & Mean bpp & Mean PSNR (dB) & $+\infty$ count\\
+\midrule
+\endfirsthead
+\caption[]{Full-test baseline sweep by bucket (continued).}\\
+\toprule
+Bucket & Codec & Setting & Mean bpp & Mean PSNR (dB) & $+\infty$ count\\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{Continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Identical & JPEG & q10 & 0.30088 & 23.99847 & 0\\
+Identical & JPEG & q25 & 0.48642 & 25.87971 & 0\\
+Identical & JPEG & q50 & 0.69213 & 27.26826 & 0\\
+Identical & JPEG & q75 & 0.95472 & 28.38444 & 0\\
+Identical & JPEG & q90 & 1.40398 & 29.24033 & 0\\
+Identical & WebP & q10 & 0.32288 & 26.93090 & 0\\
+Identical & WebP & q25 & 0.41323 & 27.89180 & 0\\
+Identical & WebP & q50 & 0.55688 & 28.76584 & 0\\
+Identical & WebP & q75 & 0.66752 & 29.14803 & 0\\
+Identical & WebP & q90 & 0.98768 & 29.54137 & 0\\
+Identical & Delta+PNG & lossless & 0.09127 & lossless & 0\\
+Identical & CompressAI & q1 & 0.17998 & 24.09647 & 0\\
+Identical & CompressAI & q3 & 0.35408 & 26.59840 & 0\\
+Identical & CompressAI & q5 & 0.56090 & 28.05574 & 0\\
+Identical & CompressAI & q7 & 0.99387 & 29.96323 & 0\\
+Minor & JPEG & q10 & 0.28981 & 24.25878 & 0\\
+Minor & JPEG & q25 & 0.46671 & 26.12276 & 0\\
+Minor & JPEG & q50 & 0.66300 & 27.50276 & 0\\
+Minor & JPEG & q75 & 0.91355 & 28.61358 & 0\\
+Minor & JPEG & q90 & 1.34202 & 29.46360 & 0\\
+Minor & WebP & q10 & 0.30825 & 27.16983 & 0\\
+Minor & WebP & q25 & 0.39393 & 28.13527 & 0\\
+Minor & WebP & q50 & 0.53064 & 29.00215 & 0\\
+Minor & WebP & q75 & 0.63579 & 29.38478 & 0\\
+Minor & WebP & q90 & 0.94099 & 29.77776 & 0\\
+Minor & Delta+PNG & lossless & 0.18034 & lossless & 0\\
+Minor & CompressAI & q1 & 0.17305 & 24.34036 & 0\\
+Minor & CompressAI & q3 & 0.33913 & 26.85173 & 0\\
+Minor & CompressAI & q5 & 0.53704 & 28.35808 & 0\\
+Minor & CompressAI & q7 & 0.94965 & 30.28024 & 0\\
+Moderate & JPEG & q10 & 0.24248 & $+\infty$ & 11\\
+Moderate & JPEG & q25 & 0.38328 & $+\infty$ & 11\\
+Moderate & JPEG & q50 & 0.53888 & $+\infty$ & 11\\
+Moderate & JPEG & q75 & 0.73744 & $+\infty$ & 11\\
+Moderate & JPEG & q90 & 1.07760 & $+\infty$ & 11\\
+Moderate & WebP & q10 & 0.24360 & $+\infty$ & 11\\
+Moderate & WebP & q25 & 0.30974 & 29.92951 & 0\\
+Moderate & WebP & q50 & 0.41777 & $+\infty$ & 11\\
+Moderate & WebP & q75 & 0.50047 & $+\infty$ & 11\\
+Moderate & WebP & q90 & 0.74151 & $+\infty$ & 11\\
+Moderate & Delta+PNG & lossless & 1.19121 & lossless & 0\\
+Moderate & CompressAI & q1 & 0.14572 & 25.84081 & 0\\
+Moderate & CompressAI & q3 & 0.27859 & 28.40452 & 0\\
+Moderate & CompressAI & q5 & 0.43912 & 30.41447 & 0\\
+Moderate & CompressAI & q7 & 0.76923 & 32.24756 & 0\\
+Major & JPEG & q10 & 0.33043 & $+\infty$ & 5\\
+Major & JPEG & q25 & 0.54347 & $+\infty$ & 5\\
+Major & JPEG & q50 & 0.77919 & $+\infty$ & 5\\
+Major & JPEG & q75 & 1.08026 & $+\infty$ & 5\\
+Major & JPEG & q90 & 1.59519 & $+\infty$ & 5\\
+Major & WebP & q10 & 0.35771 & $+\infty$ & 5\\
+Major & WebP & q25 & 0.46144 & 27.52898 & 0\\
+Major & WebP & q50 & 0.62345 & $+\infty$ & 5\\
+Major & WebP & q75 & 0.75034 & $+\infty$ & 5\\
+Major & WebP & q90 & 1.11083 & $+\infty$ & 5\\
+Major & Delta+PNG & lossless & 2.79588 & lossless & 0\\
+Major & CompressAI & q1 & 0.19889 & 23.79361 & 0\\
+Major & CompressAI & q3 & 0.39687 & 26.29426 & 0\\
+Major & CompressAI & q5 & 0.63448 & 27.83304 & 0\\
+Major & CompressAI & q7 & 1.13367 & 29.70105 & 0\\
+Unrelated & JPEG & q10 & 0.29694 & 24.05781 & 0\\
+Unrelated & JPEG & q25 & 0.47913 & 25.94353 & 0\\
+Unrelated & JPEG & q50 & 0.68121 & 27.32408 & 0\\
+Unrelated & JPEG & q75 & 0.93900 & 28.43336 & 0\\
+Unrelated & JPEG & q90 & 1.38015 & 29.28421 & 0\\
+Unrelated & WebP & q10 & 0.31718 & 26.98605 & 0\\
+Unrelated & WebP & q25 & 0.40557 & 27.94149 & 0\\
+Unrelated & WebP & q50 & 0.54634 & 28.81133 & 0\\
+Unrelated & WebP & q75 & 0.65451 & 29.19212 & 0\\
+Unrelated & WebP & q90 & 0.96942 & 29.58484 & 0\\
+Unrelated & Delta+PNG & lossless & 2.51183 & lossless & 0\\
+Unrelated & CompressAI & q1 & 0.17693 & 24.16182 & 0\\
+Unrelated & CompressAI & q3 & 0.34761 & 26.66875 & 0\\
+Unrelated & CompressAI & q5 & 0.55081 & 28.11588 & 0\\
+Unrelated & CompressAI & q7 & 0.97461 & 30.02000 & 0\\
+\end{longtable}
